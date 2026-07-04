@@ -1,0 +1,70 @@
+import { useCallback, useEffect, useState } from 'react'
+import { supabase } from '../supabaseClient'
+
+export function useItems(storeId) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchItems = useCallback(async () => {
+    if (!storeId) return
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .eq('store_id', storeId)
+      .order('created_at', { ascending: true })
+    if (!error && data) setItems(data)
+    setLoading(false)
+  }, [storeId])
+
+  useEffect(() => {
+    if (!storeId) return
+    fetchItems()
+
+    const channel = supabase
+      .channel(`items-realtime-${storeId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'items', filter: `store_id=eq.${storeId}` },
+        () => fetchItems()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [storeId, fetchItems])
+
+  async function addItem({ name, quantity }) {
+    const { error } = await supabase.from('items').insert({
+      store_id: storeId,
+      name,
+      quantity: quantity && quantity.trim() ? quantity.trim() : '1',
+      is_purchased: false,
+    })
+    if (error) console.error('addItem failed', error)
+  }
+
+  async function updateItem(id, patch) {
+    const { error } = await supabase.from('items').update(patch).eq('id', id)
+    if (error) console.error('updateItem failed', error)
+  }
+
+  async function togglePurchased(item) {
+    const nextPurchased = !item.is_purchased
+    const { error } = await supabase
+      .from('items')
+      .update({
+        is_purchased: nextPurchased,
+        purchased_at: nextPurchased ? new Date().toISOString() : null,
+      })
+      .eq('id', item.id)
+    if (error) console.error('togglePurchased failed', error)
+  }
+
+  async function deleteItem(id) {
+    const { error } = await supabase.from('items').delete().eq('id', id)
+    if (error) console.error('deleteItem failed', error)
+  }
+
+  return { items, loading, addItem, updateItem, togglePurchased, deleteItem }
+}
