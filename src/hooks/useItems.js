@@ -69,8 +69,15 @@ export function useItems(storeId) {
   }
 
   async function deleteItem(id) {
+    const previous = items
+    // Optimistic local update — don't wait for the realtime echo.
+    setItems((prev) => prev.filter((i) => i.id !== id))
+
     const { error } = await supabase.from('items').delete().eq('id', id)
-    if (error) console.error('deleteItem failed', error)
+    if (error) {
+      console.error('deleteItem failed', error)
+      setItems(previous) // roll back on failure
+    }
   }
 
   return { items, loading, addItem, updateItem, togglePurchased, deleteItem }
