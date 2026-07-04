@@ -154,22 +154,30 @@ input {
 
 .store-card-icon-row {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.store-card-cart-wrap {
+  position: relative;
+  display: inline-flex;
 }
 
 .store-card-badge {
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
   border-radius: 999px;
   background: var(--primary);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid var(--surface);
 }
 
 .store-card-cart {
@@ -368,6 +376,11 @@ input {
 
 .item-quantity.is-purchased {
   color: var(--text-muted);
+}
+
+.item-quantity:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .item-delete {

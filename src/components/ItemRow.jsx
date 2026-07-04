@@ -44,6 +44,7 @@ export function ItemRow({ item, onToggle, onUpdate, onRequestDelete }) {
         onChange={(e) => setQuantity(e.target.value)}
         onBlur={commitQuantity}
         onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+        disabled={item.is_purchased}
       />
 
       <button className="item-delete" onClick={() => onRequestDelete(item)} aria-label="מחיקת מוצר">

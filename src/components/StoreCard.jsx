@@ -55,8 +55,10 @@ export function StoreCard({
       {...dragHandlers}
     >
       <div className="store-card-icon-row">
-        <IconCart className="store-card-cart" />
-        {activeCount > 0 && <span className="store-card-badge">{activeCount}</span>}
+        <div className="store-card-cart-wrap">
+          <IconCart className="store-card-cart" />
+          {activeCount > 0 && <span className="store-card-badge">{activeCount}</span>}
+        </div>
       </div>
       <div className="store-card-name">{store.name}</div>
     </button>

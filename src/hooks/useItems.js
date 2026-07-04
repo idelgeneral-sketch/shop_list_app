@@ -51,14 +51,21 @@ export function useItems(storeId) {
 
   async function togglePurchased(item) {
     const nextPurchased = !item.is_purchased
-    const { error } = await supabase
-      .from('items')
-      .update({
-        is_purchased: nextPurchased,
-        purchased_at: nextPurchased ? new Date().toISOString() : null,
-      })
-      .eq('id', item.id)
-    if (error) console.error('togglePurchased failed', error)
+    const patch = {
+      is_purchased: nextPurchased,
+      purchased_at: nextPurchased ? new Date().toISOString() : null,
+    }
+
+    // Optimistic local update so the tap feels instant; realtime will
+    // reconcile shortly after with the server-confirmed row.
+    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, ...patch } : i)))
+
+    const { error } = await supabase.from('items').update(patch).eq('id', item.id)
+    if (error) {
+      console.error('togglePurchased failed', error)
+      // Roll back on failure.
+      setItems((prev) => prev.map((i) => (i.id === item.id ? item : i)))
+    }
   }
 
   async function deleteItem(id) {
