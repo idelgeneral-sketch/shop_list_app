@@ -4,24 +4,32 @@ import { useSettings } from '../context/SettingsContext'
 import { ItemRow } from './ItemRow'
 import { AddItemRow } from './AddItemRow'
 import { ConfirmDialog } from './ConfirmDialog'
-import { IconBack, IconEye, IconEyeOff, IconPlus } from './Icons'
+import { IconEye, IconEyeOff, IconPlus } from './Icons'
 
 export function StoreScreen({ store, onBack }) {
-  const { items, addItem, updateItem, togglePurchased, deleteItem } = useItems(store.id)
+  const { items, addItem, updateItem, togglePurchased, deleteItem, reorderItems } = useItems(store.id)
   const { settings } = useSettings()
 
   const [hidePurchased, setHidePurchased] = useState(false)
   const [adding, setAdding] = useState(false)
   const [deletingItem, setDeletingItem] = useState(null)
 
-  const visibleItems = useMemo(() => {
-    const active = items.filter((i) => !i.is_purchased)
-    if (hidePurchased) return active
-    const purchased = items
-      .filter((i) => i.is_purchased)
-      .sort((a, b) => new Date(b.purchased_at || 0) - new Date(a.purchased_at || 0))
-    return [...active, ...purchased]
-  }, [items, hidePurchased])
+  const [draggingId, setDraggingId] = useState(null)
+  const [dropTargetId, setDropTargetId] = useState(null)
+
+  const activeItems = useMemo(
+    () => items.filter((i) => !i.is_purchased).sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0)),
+    [items]
+  )
+  const purchasedItems = useMemo(
+    () =>
+      items
+        .filter((i) => i.is_purchased)
+        .sort((a, b) => new Date(b.purchased_at || 0) - new Date(a.purchased_at || 0)),
+    [items]
+  )
+
+  const visibleItems = hidePurchased ? activeItems : [...activeItems, ...purchasedItems]
 
   function requestDelete(item) {
     if (settings.confirmBeforeDelete) {
@@ -31,11 +39,44 @@ export function StoreScreen({ store, onBack }) {
     }
   }
 
+  // ---- drag & drop reorder (active items only) ----
+  function onDragStart(id) {
+    setDraggingId(id)
+  }
+  function onDragOverItem(e, id) {
+    e.preventDefault()
+    if (id !== draggingId) setDropTargetId(id)
+  }
+  function onDropItem(targetId) {
+    if (!draggingId || draggingId === targetId) {
+      setDraggingId(null)
+      setDropTargetId(null)
+      return
+    }
+    const ids = activeItems.map((i) => i.id)
+    const from = ids.indexOf(draggingId)
+    const to = ids.indexOf(targetId)
+    if (from === -1 || to === -1) {
+      setDraggingId(null)
+      setDropTargetId(null)
+      return
+    }
+    ids.splice(from, 1)
+    ids.splice(to, 0, draggingId)
+    reorderItems(ids)
+    setDraggingId(null)
+    setDropTargetId(null)
+  }
+  function onDragEnd() {
+    setDraggingId(null)
+    setDropTargetId(null)
+  }
+
   return (
     <div className="screen-fade">
       <div className="store-header">
         <button className="icon-btn" onClick={onBack} aria-label="חזרה">
-          <IconBack />
+          <span className="back-arrow-char">→</span>
         </button>
         <div className="store-header-title">{store.name}</div>
         <button
@@ -62,6 +103,18 @@ export function StoreScreen({ store, onBack }) {
               onToggle={togglePurchased}
               onUpdate={updateItem}
               onRequestDelete={requestDelete}
+              isDragging={draggingId === item.id}
+              isDropTarget={dropTargetId === item.id}
+              dragHandlers={
+                item.is_purchased
+                  ? null
+                  : {
+                      onDragStart: () => onDragStart(item.id),
+                      onDragOver: (e) => onDragOverItem(e, item.id),
+                      onDrop: () => onDropItem(item.id),
+                      onDragEnd,
+                    }
+              }
             />
           ))}
           {adding && (

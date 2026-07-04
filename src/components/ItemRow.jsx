@@ -1,9 +1,18 @@
 import { useState } from 'react'
-import { IconCheck, IconTrash } from './Icons'
+import { IconCheck, IconDragHandle, IconTrash } from './Icons'
 
-export function ItemRow({ item, onToggle, onUpdate, onRequestDelete }) {
+export function ItemRow({
+  item,
+  onToggle,
+  onUpdate,
+  onRequestDelete,
+  isDragging,
+  isDropTarget,
+  dragHandlers,
+}) {
   const [name, setName] = useState(item.name)
   const [quantity, setQuantity] = useState(item.quantity)
+  const [draggable, setDraggable] = useState(false)
 
   function commitName() {
     const trimmed = name.trim()
@@ -20,8 +29,34 @@ export function ItemRow({ item, onToggle, onUpdate, onRequestDelete }) {
     setQuantity(trimmed)
   }
 
+  const canReorder = !item.is_purchased && dragHandlers
+
+  const classes = [
+    'item-row',
+    item.is_purchased ? 'is-purchased' : '',
+    isDragging ? 'is-dragging' : '',
+    isDropTarget ? 'is-drop-target' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div className={`item-row ${item.is_purchased ? 'is-purchased' : ''}`}>
+    <div
+      className={classes}
+      draggable={draggable}
+      {...(canReorder ? dragHandlers : {})}
+    >
+      <button
+        type="button"
+        className={`drag-handle ${canReorder ? '' : 'is-disabled'}`}
+        onPointerDown={() => canReorder && setDraggable(true)}
+        onPointerUp={() => setDraggable(false)}
+        onPointerLeave={() => setDraggable(false)}
+        aria-label="גרירה לשינוי מיקום"
+      >
+        <IconDragHandle />
+      </button>
+
       <button
         className={`checkbox-btn ${item.is_purchased ? 'is-checked' : ''}`}
         onClick={() => onToggle(item)}

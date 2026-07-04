@@ -100,3 +100,16 @@ export function IconCheck(props) {
     </svg>
   )
 }
+
+export function IconDragHandle(props) {
+  return (
+    <svg width="16" height="20" viewBox="0 0 16 20" fill="none" {...props}>
+      <circle cx="4" cy="4" r="1.6" fill="currentColor" />
+      <circle cx="12" cy="4" r="1.6" fill="currentColor" />
+      <circle cx="4" cy="10" r="1.6" fill="currentColor" />
+      <circle cx="12" cy="10" r="1.6" fill="currentColor" />
+      <circle cx="4" cy="16" r="1.6" fill="currentColor" />
+      <circle cx="12" cy="16" r="1.6" fill="currentColor" />
+    </svg>
+  )
+}

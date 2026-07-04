@@ -11,7 +11,7 @@ export function useItems(storeId) {
       .from('items')
       .select('*')
       .eq('store_id', storeId)
-      .order('created_at', { ascending: true })
+      .order('order_index', { ascending: true })
     if (!error && data) setItems(data)
     setLoading(false)
   }, [storeId])
@@ -35,11 +35,15 @@ export function useItems(storeId) {
   }, [storeId, fetchItems])
 
   async function addItem({ name, quantity }) {
+    const nextOrder = items.length
+      ? Math.max(...items.map((i) => i.order_index ?? 0)) + 1
+      : 0
     const { error } = await supabase.from('items').insert({
       store_id: storeId,
       name,
       quantity: quantity && quantity.trim() ? quantity.trim() : '1',
       is_purchased: false,
+      order_index: nextOrder,
     })
     if (error) console.error('addItem failed', error)
   }
@@ -80,5 +84,21 @@ export function useItems(storeId) {
     }
   }
 
-  return { items, loading, addItem, updateItem, togglePurchased, deleteItem }
+  async function reorderItems(orderedIds) {
+    // Optimistic local update so the drag feels instant.
+    setItems((prev) => {
+      const byId = new Map(prev.map((i) => [i.id, i]))
+      const reordered = orderedIds.map((id) => byId.get(id)).filter(Boolean)
+      const rest = prev.filter((i) => !orderedIds.includes(i.id))
+      return [...reordered, ...rest]
+    })
+    const updates = orderedIds.map((id, index) =>
+      supabase.from('items').update({ order_index: index }).eq('id', id)
+    )
+    const results = await Promise.all(updates)
+    const failed = results.find((r) => r.error)
+    if (failed) console.error('reorderItems failed', failed.error)
+  }
+
+  return { items, loading, addItem, updateItem, togglePurchased, deleteItem, reorderItems }
 }

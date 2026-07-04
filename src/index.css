@@ -1,6 +1,6 @@
 :root {
   --bg: #F3F4F6;
-  --surface: #FFFFFF;
+  --surface: #F8F8FA;
   --primary: #6E56CF;
   --primary-dark: #5943B3;
   --primary-light: #EFEAFE;
@@ -22,6 +22,7 @@
 
 html, body, #root {
   height: 100%;
+  background: var(--bg);
 }
 
 body {
@@ -115,6 +116,12 @@ input {
   background: var(--primary-light);
 }
 
+.back-arrow-char {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* ---------- Stores grid ---------- */
 
 .stores-grid {
@@ -129,11 +136,12 @@ input {
   background: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: 18px 16px 16px;
-  min-height: 118px;
+  padding: 16px 16px;
+  min-height: 76px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
   text-align: right;
   transition: transform 150ms ease, box-shadow 150ms ease;
   border: 1px solid transparent;
@@ -152,14 +160,15 @@ input {
   box-shadow: 0 0 0 2px var(--primary);
 }
 
-.store-card-icon-row {
-  display: flex;
-  justify-content: flex-start;
-}
-
 .store-card-cart-wrap {
   position: relative;
   display: inline-flex;
+  flex-shrink: 0;
+}
+
+.store-card-cart {
+  color: var(--primary);
+  opacity: 0.9;
 }
 
 .store-card-badge {
@@ -180,17 +189,13 @@ input {
   border: 2px solid var(--surface);
 }
 
-.store-card-cart {
-  color: var(--primary);
-  opacity: 0.85;
-}
-
 .store-card-name {
   font-size: 15px;
   font-weight: 700;
-  margin-top: 10px;
   line-height: 1.3;
   word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 
 .store-card-progress-track {
@@ -240,7 +245,7 @@ input {
 
 .inline-add-row.in-grid {
   grid-column: span 1;
-  min-height: 118px;
+  min-height: 76px;
 }
 
 /* ---------- FAB ---------- */
@@ -319,10 +324,36 @@ input {
   align-items: center;
   gap: 8px;
   min-height: 56px;
+  transition: opacity 150ms ease, box-shadow 150ms ease;
+}
+
+.item-row.is-dragging {
+  opacity: 0.5;
+}
+
+.item-row.is-drop-target {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.drag-handle {
+  width: 22px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  touch-action: none;
+  cursor: grab;
+}
+
+.drag-handle.is-disabled {
+  opacity: 0.25;
+  pointer-events: none;
 }
 
 .item-row.is-purchased {
-  background: #F8F8FA;
+  background: #EFEFF3;
   box-shadow: none;
 }
 
