@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 
+// Module-scoped cache: survives across StoresScreen re-mounts within the same
+// page session, so switching back to this screen shows the last-known list
+// immediately instead of flashing empty while it re-fetches in the background.
+let storesCache = null
+
 export function useStores() {
-  const [stores, setStores] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [stores, setStores] = useState(() => storesCache || [])
+  const [loading, setLoading] = useState(() => storesCache === null)
 
   const fetchStores = useCallback(async () => {
     const { data, error } = await supabase
       .from('stores')
       .select('*')
       .order('order_index', { ascending: true })
-    if (!error && data) setStores(data)
+    if (!error && data) {
+      setStores(data)
+      storesCache = data
+    }
     setLoading(false)
   }, [])
 
@@ -53,7 +61,9 @@ export function useStores() {
     // Optimistic local update so the drag feels instant.
     setStores((prev) => {
       const byId = new Map(prev.map((s) => [s.id, s]))
-      return orderedIds.map((id) => byId.get(id)).filter(Boolean)
+      const next = orderedIds.map((id) => byId.get(id)).filter(Boolean)
+      storesCache = next
+      return next
     })
     const updates = orderedIds.map((id, index) =>
       supabase.from('stores').update({ order_index: index }).eq('id', id)

@@ -220,6 +220,36 @@ input {
   line-height: 1.6;
 }
 
+/* ---------- Loading skeletons ---------- */
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #E9E9EE 25%, #F1F1F5 37%, #E9E9EE 63%);
+  background-size: 400% 100%;
+  animation: skeletonPulse 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+.skeleton-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 999px;
+}
+
+@keyframes skeletonPulse {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 /* ---------- Inline add row (stores + items share this look) ---------- */
 
 .inline-add-row {

@@ -6,7 +6,7 @@ import { StoresScreen } from './components/StoresScreen'
 import { StoreScreen } from './components/StoreScreen'
 
 function AppContent() {
-  const { stores, addStore, renameStore, deleteStore, reorderStores } = useStores()
+  const { stores, loading: storesLoading, addStore, renameStore, deleteStore, reorderStores } = useStores()
   const counts = useActiveItemCounts()
   const [openStoreId, setOpenStoreId] = useState(null)
 
@@ -42,6 +42,7 @@ function AppContent() {
       ) : (
         <StoresScreen
           stores={stores}
+          loading={storesLoading}
           counts={counts}
           addStore={addStore}
           renameStore={renameStore}

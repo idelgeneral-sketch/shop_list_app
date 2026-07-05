@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useSettings } from '../context/SettingsContext'
 import { StoreCard } from './StoreCard'
+import { StoreCardSkeleton } from './Skeletons'
 import { SettingsSheet } from './SettingsSheet'
 import { ConfirmDialog } from './ConfirmDialog'
 import { IconPlus, IconSettings } from './Icons'
 
 export function StoresScreen({
   stores,
+  loading,
   counts,
   addStore,
   renameStore,
@@ -108,7 +110,13 @@ export function StoresScreen({
         <div style={{ width: 40 }} />
       </div>
 
-      {stores.length === 0 && !adding ? (
+      {loading && stores.length === 0 ? (
+        <div className="stores-grid">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <StoreCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : stores.length === 0 && !adding ? (
         <div className="empty-state">
           עדיין אין חנויות ברשימה.
           <br />

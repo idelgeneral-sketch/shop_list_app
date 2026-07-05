@@ -2,12 +2,13 @@ import { useMemo, useState } from 'react'
 import { useItems } from '../hooks/useItems'
 import { useSettings } from '../context/SettingsContext'
 import { ItemRow } from './ItemRow'
+import { ItemRowSkeleton } from './Skeletons'
 import { AddItemRow } from './AddItemRow'
 import { ConfirmDialog } from './ConfirmDialog'
 import { IconEye, IconEyeOff, IconPlus } from './Icons'
 
 export function StoreScreen({ store, onBack }) {
-  const { items, addItem, updateItem, togglePurchased, deleteItem, reorderItems } = useItems(store.id)
+  const { items, loading, addItem, updateItem, togglePurchased, deleteItem, reorderItems } = useItems(store.id)
   const { settings } = useSettings()
 
   const [hidePurchased, setHidePurchased] = useState(false)
@@ -88,7 +89,13 @@ export function StoreScreen({ store, onBack }) {
         </button>
       </div>
 
-      {visibleItems.length === 0 && !adding ? (
+      {loading && items.length === 0 ? (
+        <div className="items-list">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <ItemRowSkeleton key={i} />
+          ))}
+        </div>
+      ) : visibleItems.length === 0 && !adding ? (
         <div className="empty-state">
           הרשימה ריקה.
           <br />

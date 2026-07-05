@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 
+// Module-scoped cache keyed by storeId: survives across StoreScreen
+// mount/unmount cycles within the same page session, so reopening a store
+// you already visited shows its items instantly instead of blanking out
+// while it re-fetches in the background.
+const itemsCache = new Map()
+
 export function useItems(storeId) {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [items, setItems] = useState(() => itemsCache.get(storeId) || [])
+  const [loading, setLoading] = useState(() => !itemsCache.has(storeId))
 
   const fetchItems = useCallback(async () => {
     if (!storeId) return
@@ -12,7 +18,10 @@ export function useItems(storeId) {
       .select('*')
       .eq('store_id', storeId)
       .order('order_index', { ascending: true })
-    if (!error && data) setItems(data)
+    if (!error && data) {
+      setItems(data)
+      itemsCache.set(storeId, data)
+    }
     setLoading(false)
   }, [storeId])
 
@@ -33,6 +42,14 @@ export function useItems(storeId) {
       supabase.removeChannel(channel)
     }
   }, [storeId, fetchItems])
+
+  function setItemsAndCache(updater) {
+    setItems((prev) => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      itemsCache.set(storeId, next)
+      return next
+    })
+  }
 
   async function addItem({ name, quantity }) {
     const nextOrder = items.length
@@ -62,31 +79,31 @@ export function useItems(storeId) {
 
     // Optimistic local update so the tap feels instant; realtime will
     // reconcile shortly after with the server-confirmed row.
-    setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, ...patch } : i)))
+    setItemsAndCache((prev) => prev.map((i) => (i.id === item.id ? { ...i, ...patch } : i)))
 
     const { error } = await supabase.from('items').update(patch).eq('id', item.id)
     if (error) {
       console.error('togglePurchased failed', error)
       // Roll back on failure.
-      setItems((prev) => prev.map((i) => (i.id === item.id ? item : i)))
+      setItemsAndCache((prev) => prev.map((i) => (i.id === item.id ? item : i)))
     }
   }
 
   async function deleteItem(id) {
     const previous = items
     // Optimistic local update — don't wait for the realtime echo.
-    setItems((prev) => prev.filter((i) => i.id !== id))
+    setItemsAndCache((prev) => prev.filter((i) => i.id !== id))
 
     const { error } = await supabase.from('items').delete().eq('id', id)
     if (error) {
       console.error('deleteItem failed', error)
-      setItems(previous) // roll back on failure
+      setItemsAndCache(previous) // roll back on failure
     }
   }
 
   async function reorderItems(orderedIds) {
     // Optimistic local update so the drag feels instant.
-    setItems((prev) => {
+    setItemsAndCache((prev) => {
       const byId = new Map(prev.map((i) => [i.id, i]))
       const reordered = orderedIds.map((id) => byId.get(id)).filter(Boolean)
       const rest = prev.filter((i) => !orderedIds.includes(i.id))
