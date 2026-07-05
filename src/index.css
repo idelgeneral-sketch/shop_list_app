@@ -193,9 +193,11 @@ input {
   font-size: 15px;
   font-weight: 700;
   line-height: 1.3;
-  word-break: break-word;
   flex: 1;
   min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .store-card-progress-track {

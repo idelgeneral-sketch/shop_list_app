@@ -103,11 +103,13 @@ export function StoresScreen({
   return (
     <div className="screen-fade">
       <div className="topbar">
+        <button className="icon-btn" onClick={startAdd} aria-label="הוספת חנות">
+          <IconPlus />
+        </button>
+        <div className="topbar-title">רשימת קניות</div>
         <button className="icon-btn" onClick={() => setShowSettings(true)} aria-label="הגדרות">
           <IconSettings />
         </button>
-        <div className="topbar-title">רשימת קניות</div>
-        <div style={{ width: 40 }} />
       </div>
 
       {loading && stores.length === 0 ? (
@@ -120,7 +122,7 @@ export function StoresScreen({
         <div className="empty-state">
           עדיין אין חנויות ברשימה.
           <br />
-          לוחצים על הכפתור הסגול למטה כדי להוסיף חנות ראשונה.
+          לוחצים על + למעלה כדי להוסיף חנות ראשונה.
         </div>
       ) : (
         <div className="stores-grid">
@@ -159,14 +161,6 @@ export function StoresScreen({
           )}
         </div>
       )}
-
-      <div className="fab-wrap">
-        <div className="app-shell-align">
-          <button className="fab" onClick={startAdd} aria-label="הוספת חנות">
-            <IconPlus />
-          </button>
-        </div>
-      </div>
 
       {showSettings && <SettingsSheet onClose={() => setShowSettings(false)} />}
 
