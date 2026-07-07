@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useProductSuggestions, recordProductUsage } from '../hooks/useProductSuggestions'
 
-export function AddItemRow({ smartSearchEnabled, onSubmitItem, onEmptyBlurClose }) {
+export const AddItemRow = forwardRef(function AddItemRow(
+  { smartSearchEnabled, onSubmitItem, onEmptyBlurClose },
+  ref
+) {
   const [stage, setStage] = useState('name') // 'name' | 'quantity'
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState('')
@@ -32,7 +35,7 @@ export function AddItemRow({ smartSearchEnabled, onSubmitItem, onEmptyBlurClose 
     setStage('quantity')
   }
 
-  async function finishItem() {
+  function finishItem() {
     const finalQuantity = quantity.trim() || '1'
     const finalName = name.trim()
     if (!finalName) return
@@ -44,6 +47,14 @@ export function AddItemRow({ smartSearchEnabled, onSubmitItem, onEmptyBlurClose 
     setStage('name')
     requestAnimationFrame(() => nameRef.current?.focus())
   }
+
+  // Lets the parent (the outer + button) commit whatever is currently typed
+  // — e.g. just a name with no quantity yet — the same way pressing Enter
+  // on the quantity field does, and then open a fresh row.
+  useImperativeHandle(ref, () => ({
+    submitCurrent: finishItem,
+    hasDraft: () => name.trim().length > 0,
+  }))
 
   function handleNameKeyDown(e) {
     if (e.key === 'Enter') {
@@ -112,4 +123,4 @@ export function AddItemRow({ smartSearchEnabled, onSubmitItem, onEmptyBlurClose 
       <div className="item-delete" aria-hidden="true" />
     </div>
   )
-}
+})

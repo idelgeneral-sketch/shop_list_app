@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useItems } from '../hooks/useItems'
 import { useSettings } from '../context/SettingsContext'
 import { ItemRow } from './ItemRow'
@@ -14,6 +14,7 @@ export function StoreScreen({ store, onBack }) {
   const [hidePurchased, setHidePurchased] = useState(false)
   const [adding, setAdding] = useState(false)
   const [deletingItem, setDeletingItem] = useState(null)
+  const addItemRowRef = useRef(null)
 
   const [draggingId, setDraggingId] = useState(null)
   const [dropTargetId, setDropTargetId] = useState(null)
@@ -73,6 +74,16 @@ export function StoreScreen({ store, onBack }) {
     setDropTargetId(null)
   }
 
+  function handleFabClick() {
+    if (adding) {
+      // A row is already open — commit whatever's typed (defaulting quantity
+      // to 1, same as pressing Enter) and let AddItemRow open a fresh one.
+      addItemRowRef.current?.submitCurrent()
+    } else {
+      setAdding(true)
+    }
+  }
+
   return (
     <div className="screen-fade">
       <div className="store-header">
@@ -126,6 +137,7 @@ export function StoreScreen({ store, onBack }) {
           ))}
           {adding && (
             <AddItemRow
+              ref={addItemRowRef}
               smartSearchEnabled={settings.smartSearch}
               onSubmitItem={addItem}
               onEmptyBlurClose={() => setAdding(false)}
@@ -136,7 +148,7 @@ export function StoreScreen({ store, onBack }) {
 
       <div className="fab-wrap">
         <div className="app-shell-align">
-          <button className="fab" onClick={() => setAdding(true)} aria-label="הוספת מוצר">
+          <button className="fab" onClick={handleFabClick} aria-label="הוספת מוצר">
             <IconPlus />
           </button>
         </div>
