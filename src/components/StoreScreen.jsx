@@ -11,7 +11,7 @@ export function StoreScreen({ store, onBack }) {
   const { items, loading, addItem, updateItem, togglePurchased, deleteItem, reorderItems } = useItems(store.id)
   const { settings } = useSettings()
 
-  const [hidePurchased, setHidePurchased] = useState(false)
+  const [hidePurchased, setHidePurchased] = useState(true)
   const [adding, setAdding] = useState(false)
   const [deletingItem, setDeletingItem] = useState(null)
   const addItemRowRef = useRef(null)
