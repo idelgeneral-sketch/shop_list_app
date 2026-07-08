@@ -113,3 +113,22 @@ export function IconDragHandle(props) {
     </svg>
   )
 }
+
+export function IconMenu(props) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function IconTasks(props) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="3.5" y="4.5" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M5.3 7.5l1.1 1.1 2.1-2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="3.5" y="13.5" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M13 7h7.5M13 17h7.5M13 12h7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}

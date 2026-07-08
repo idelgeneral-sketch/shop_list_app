@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { useSettings } from '../context/SettingsContext'
 import { StoreCard } from './StoreCard'
 import { StoreCardSkeleton } from './Skeletons'
-import { SettingsSheet } from './SettingsSheet'
 import { ConfirmDialog } from './ConfirmDialog'
-import { IconPlus, IconSettings } from './Icons'
+import { IconMenu, IconPlus } from './Icons'
 
 export function StoresScreen({
   stores,
@@ -15,12 +14,12 @@ export function StoresScreen({
   deleteStore,
   reorderStores,
   onOpenStore,
+  onOpenMenu,
 }) {
   const { settings } = useSettings()
 
   const [adding, setAdding] = useState(false)
   const [draftName, setDraftName] = useState('')
-  const [showSettings, setShowSettings] = useState(false)
 
   const [menuStore, setMenuStore] = useState(null) // long-press action menu
   const [renamingStore, setRenamingStore] = useState(null)
@@ -107,8 +106,8 @@ export function StoresScreen({
           <IconPlus />
         </button>
         <div className="topbar-title">רשימת קניות</div>
-        <button className="icon-btn" onClick={() => setShowSettings(true)} aria-label="הגדרות">
-          <IconSettings />
+        <button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
+          <IconMenu />
         </button>
       </div>
 
@@ -161,8 +160,6 @@ export function StoresScreen({
           )}
         </div>
       )}
-
-      {showSettings && <SettingsSheet onClose={() => setShowSettings(false)} />}
 
       {menuStore && (
         <div className="sheet-overlay" onClick={() => setMenuStore(null)}>
