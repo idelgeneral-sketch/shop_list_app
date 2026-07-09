@@ -4,16 +4,22 @@ import { useStores } from './hooks/useStores'
 import { useActiveItemCounts } from './hooks/useActiveItemCounts'
 import { StoresScreen } from './components/StoresScreen'
 import { StoreScreen } from './components/StoreScreen'
+import { TasksScreen } from './components/TasksScreen'
+import { MainMenu } from './components/MainMenu'
+import { SettingsSheet } from './components/SettingsSheet'
 
 function AppContent() {
   const { stores, loading: storesLoading, addStore, renameStore, deleteStore, reorderStores } = useStores()
   const counts = useActiveItemCounts()
   const [openStoreId, setOpenStoreId] = useState(null)
+  const [screen, setScreen] = useState('shopping') // 'shopping' | 'tasks' — shopping list stays the default
+  const [showMenu, setShowMenu] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   const openStore = stores.find((s) => s.id === openStoreId) || null
 
   // Hardware/browser back button: while a store is open, back should close
-  // it and return to the stores list. Only when already on the stores list
+  // it and return to the stores list. Only when already on a root screen
   // should back fall through to the browser's default behavior (exit / leave
   // the app), so we don't push any history entry for that screen.
   useEffect(() => {
@@ -39,6 +45,8 @@ function AppContent() {
     <div className="app-shell">
       {openStore ? (
         <StoreScreen store={openStore} onBack={closeStoreScreen} />
+      ) : screen === 'tasks' ? (
+        <TasksScreen onOpenMenu={() => setShowMenu(true)} />
       ) : (
         <StoresScreen
           stores={stores}
@@ -49,8 +57,20 @@ function AppContent() {
           deleteStore={deleteStore}
           reorderStores={reorderStores}
           onOpenStore={openStoreScreen}
+          onOpenMenu={() => setShowMenu(true)}
         />
       )}
+
+      {showMenu && (
+        <MainMenu
+          activeScreen={screen}
+          onSelectScreen={setScreen}
+          onOpenSettings={() => setShowSettings(true)}
+          onClose={() => setShowMenu(false)}
+        />
+      )}
+
+      {showSettings && <SettingsSheet onClose={() => setShowSettings(false)} />}
     </div>
   )
 }
