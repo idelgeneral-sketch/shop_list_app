@@ -103,10 +103,10 @@ export function StoresScreen({
     <div className="screen-fade">
       <div className="topbar">
         <div style={{ width: 40 }} />
-        <div className="topbar-title">רשימת קניות</div>
-        <button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
+		<button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
           <IconMenu />
         </button>
+        <div className="topbar-title">רשימת קניות</div>
       </div>
 
       {loading && stores.length === 0 ? (
