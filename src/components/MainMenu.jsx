@@ -1,4 +1,4 @@
-import { IconCart, IconClose, IconSettings, IconTasks } from './Icons'
+import { IconCart, IconClose, IconTasks } from './Icons'
 import { APP_VERSION } from '../version'
 
 const SCREENS = [
@@ -6,7 +6,7 @@ const SCREENS = [
   { id: 'tasks', label: 'משימות', icon: IconTasks },
 ]
 
-export function MainMenu({ activeScreen, onSelectScreen, onOpenSettings, onClose }) {
+export function MainMenu({ activeScreen, onSelectScreen, onClose }) {
   return (
     <div className="sheet-overlay" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
@@ -33,19 +33,6 @@ export function MainMenu({ activeScreen, onSelectScreen, onOpenSettings, onClose
               <span>{label}</span>
             </button>
           ))}
-
-          <div className="menu-divider" />
-
-          <button
-            className="menu-row"
-            onClick={() => {
-              onOpenSettings()
-              onClose()
-            }}
-          >
-            <IconSettings />
-            <span>הגדרות</span>
-          </button>
         </div>
 
         <div className="menu-version">גרסה {APP_VERSION}</div>

@@ -3,7 +3,7 @@ import { useSettings } from '../context/SettingsContext'
 import { StoreCard } from './StoreCard'
 import { StoreCardSkeleton } from './Skeletons'
 import { ConfirmDialog } from './ConfirmDialog'
-import { IconMenu, IconPlus } from './Icons'
+import { IconMenu, IconPlus, IconSettings } from './Icons'
 
 export function StoresScreen({
   stores,
@@ -15,6 +15,7 @@ export function StoresScreen({
   reorderStores,
   onOpenStore,
   onOpenMenu,
+  onOpenSettings,
 }) {
   const { settings } = useSettings()
 
@@ -102,10 +103,13 @@ export function StoresScreen({
   return (
     <div className="screen-fade">
       <div className="topbar">
-		<button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
+        <div className="topbar-title">רשימת קניות</div>
+        <button className="icon-btn header-btn-right" onClick={onOpenMenu} aria-label="תפריט">
           <IconMenu />
         </button>
-        <div className="topbar-title">רשימת קניות</div>
+        <button className="icon-btn header-btn-left" onClick={onOpenSettings} aria-label="הגדרות">
+          <IconSettings />
+        </button>
       </div>
 
       {loading && stores.length === 0 ? (

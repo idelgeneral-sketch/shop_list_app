@@ -87,12 +87,12 @@ export function StoreScreen({ store, onBack }) {
   return (
     <div className="screen-fade">
       <div className="store-header">
-        <button className="icon-btn" onClick={onBack} aria-label="חזרה">
+        <div className="store-header-title">{store.name}</div>
+        <button className="icon-btn header-btn-right" onClick={onBack} aria-label="חזרה">
           <span className="back-arrow-char">→</span>
         </button>
-        <div className="store-header-title">{store.name}</div>
         <button
-          className={`icon-btn ${hidePurchased ? 'is-active' : ''}`}
+          className={`icon-btn header-btn-left ${hidePurchased ? 'is-active' : ''}`}
           onClick={() => setHidePurchased((v) => !v)}
           aria-label="הצגה/הסתרה של פריטים שנקנו"
         >

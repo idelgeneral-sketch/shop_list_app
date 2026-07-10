@@ -58,16 +58,12 @@ function AppContent() {
           reorderStores={reorderStores}
           onOpenStore={openStoreScreen}
           onOpenMenu={() => setShowMenu(true)}
+          onOpenSettings={() => setShowSettings(true)}
         />
       )}
 
       {showMenu && (
-        <MainMenu
-          activeScreen={screen}
-          onSelectScreen={setScreen}
-          onOpenSettings={() => setShowSettings(true)}
-          onClose={() => setShowMenu(false)}
-        />
+        <MainMenu activeScreen={screen} onSelectScreen={setScreen} onClose={() => setShowMenu(false)} />
       )}
 
       {showSettings && <SettingsSheet onClose={() => setShowSettings(false)} />}
