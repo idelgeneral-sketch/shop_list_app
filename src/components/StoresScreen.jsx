@@ -106,9 +106,6 @@ export function StoresScreen({
           <IconMenu />
         </button>
         <div className="topbar-title">רשימת קניות</div>
-		<button className="icon-btn" onClick={() => setShowSettings(true)} aria-label="הגדרות">
-          <IconSettings />
-        </button>
       </div>
 
       {loading && stores.length === 0 ? (
