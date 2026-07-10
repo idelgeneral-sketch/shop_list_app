@@ -318,6 +318,13 @@ input {
   background: var(--primary-dark);
 }
 
+.fab-corner-left {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  z-index: 40;
+}
+
 /* ---------- Store screen header ---------- */
 
 .store-header {
@@ -444,6 +451,11 @@ input {
 .item-quantity:disabled {
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.item-quantity:focus {
+  background: #DCDCE4;
+  outline: none;
 }
 
 .item-delete {
@@ -585,6 +597,39 @@ input {
   font-weight: 700;
   font-size: 14px;
   margin-top: 8px;
+}
+
+/* ---------- Main menu ---------- */
+
+.menu-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 6px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+  border-radius: 12px;
+}
+
+.menu-row:hover {
+  background: rgba(31, 41, 51, 0.04);
+}
+
+.menu-row.is-active {
+  color: var(--primary);
+}
+
+.menu-row.is-active svg {
+  color: var(--primary);
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 6px 2px;
 }
 
 /* ---------- Confirm dialog ---------- */

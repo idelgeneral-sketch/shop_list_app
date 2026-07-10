@@ -102,9 +102,7 @@ export function StoresScreen({
   return (
     <div className="screen-fade">
       <div className="topbar">
-        <button className="icon-btn" onClick={startAdd} aria-label="הוספת חנות">
-          <IconPlus />
-        </button>
+        <div style={{ width: 40 }} />
         <div className="topbar-title">רשימת קניות</div>
         <button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
           <IconMenu />
@@ -121,7 +119,7 @@ export function StoresScreen({
         <div className="empty-state">
           עדיין אין חנויות ברשימה.
           <br />
-          לוחצים על + למעלה כדי להוסיף חנות ראשונה.
+          לוחצים על + למטה כדי להוסיף חנות ראשונה.
         </div>
       ) : (
         <div className="stores-grid">
@@ -160,6 +158,10 @@ export function StoresScreen({
           )}
         </div>
       )}
+
+      <button className="fab fab-corner-left" onClick={startAdd} aria-label="הוספת חנות">
+        <IconPlus />
+      </button>
 
       {menuStore && (
         <div className="sheet-overlay" onClick={() => setMenuStore(null)}>

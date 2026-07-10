@@ -85,16 +85,16 @@ export function TasksScreen({ onOpenMenu }) {
   return (
     <div className="screen-fade">
       <div className="store-header">
-        <button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
-          <IconMenu />
-        </button>
-        <div className="store-header-title">משימות</div>
         <button
           className={`icon-btn ${hideDone ? 'is-active' : ''}`}
           onClick={() => setHideDone((v) => !v)}
           aria-label="הצגה/הסתרה של משימות שבוצעו"
         >
           {hideDone ? <IconEyeOff /> : <IconEye />}
+        </button>
+        <div className="store-header-title">משימות</div>
+        <button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
+          <IconMenu />
         </button>
       </div>
 
