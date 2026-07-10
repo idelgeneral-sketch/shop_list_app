@@ -102,7 +102,7 @@ export function StoresScreen({
   return (
     <div className="screen-fade">
       <div className="topbar">
-        <div style={{ width: 40 }} />
+//        <div style={{ width: 40 }} />
 		<button className="icon-btn" onClick={onOpenMenu} aria-label="תפריט">
           <IconMenu />
         </button>
