@@ -632,6 +632,13 @@ input {
   margin: 6px 2px;
 }
 
+.menu-version {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 16px;
+}
+
 /* ---------- Confirm dialog ---------- */
 
 .confirm-overlay {

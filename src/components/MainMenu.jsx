@@ -1,4 +1,5 @@
 import { IconCart, IconClose, IconSettings, IconTasks } from './Icons'
+import { APP_VERSION } from '../version'
 
 const SCREENS = [
   { id: 'shopping', label: 'רשימת קניות', icon: IconCart },
@@ -46,6 +47,8 @@ export function MainMenu({ activeScreen, onSelectScreen, onOpenSettings, onClose
             <span>הגדרות</span>
           </button>
         </div>
+
+        <div className="menu-version">גרסה {APP_VERSION}</div>
       </div>
     </div>
   )
