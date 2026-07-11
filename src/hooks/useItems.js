@@ -55,14 +55,24 @@ export function useItems(storeId) {
     const nextOrder = items.length
       ? Math.max(...items.map((i) => i.order_index ?? 0)) + 1
       : 0
-    const { error } = await supabase.from('items').insert({
-      store_id: storeId,
-      name,
-      quantity: quantity && quantity.trim() ? quantity.trim() : '1',
-      is_purchased: false,
-      order_index: nextOrder,
-    })
-    if (error) console.error('addItem failed', error)
+    const { data, error } = await supabase
+      .from('items')
+      .insert({
+        store_id: storeId,
+        name,
+        quantity: quantity && quantity.trim() ? quantity.trim() : '1',
+        is_purchased: false,
+        order_index: nextOrder,
+      })
+      .select()
+      .single()
+    if (error) {
+      console.error('addItem failed', error)
+      return
+    }
+    // Add the server-confirmed row immediately — don't wait for the
+    // realtime echo, which was causing a visible gap before the item showed up.
+    setItemsAndCache((prev) => [...prev, data])
   }
 
   async function updateItem(id, patch) {

@@ -47,12 +47,20 @@ export function useTasks() {
 
   async function addTask(title) {
     const nextOrder = tasks.length ? Math.max(...tasks.map((t) => t.order_index ?? 0)) + 1 : 0
-    const { error } = await supabase.from('tasks').insert({
-      title,
-      is_done: false,
-      order_index: nextOrder,
-    })
-    if (error) console.error('addTask failed', error)
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({
+        title,
+        is_done: false,
+        order_index: nextOrder,
+      })
+      .select()
+      .single()
+    if (error) {
+      console.error('addTask failed', error)
+      return
+    }
+    setTasksAndCache((prev) => [...prev, data])
   }
 
   async function updateTask(id, patch) {
