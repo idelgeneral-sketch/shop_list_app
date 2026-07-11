@@ -395,6 +395,32 @@ input {
   box-shadow: 0 0 0 2px var(--primary);
 }
 
+.item-row.is-delete-mode {
+  cursor: pointer;
+}
+
+.item-name-display {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delete-confirm-btn {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: var(--danger);
+  color: white;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
 .drag-handle {
   width: 22px;
   height: 40px;
