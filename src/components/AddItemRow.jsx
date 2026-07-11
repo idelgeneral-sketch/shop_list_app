@@ -119,8 +119,6 @@ export const AddItemRow = forwardRef(function AddItemRow(
         onKeyDown={handleQuantityKeyDown}
         onFocus={() => stage !== 'quantity' && setStage('quantity')}
       />
-
-      <div className="item-delete" aria-hidden="true" />
     </div>
   )
 })

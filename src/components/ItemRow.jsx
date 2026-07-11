@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { IconCheck, IconDragHandle, IconTrash } from './Icons'
+import { IconCheck, IconDragHandle } from './Icons'
 
 const LONG_PRESS_MS = 500
 
@@ -131,10 +131,6 @@ export function ItemRow({
         onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
         disabled={item.is_purchased}
       />
-
-      <button className="item-delete" onClick={() => onRequestDelete(item)} aria-label="מחיקת מוצר">
-        <IconTrash />
-      </button>
     </div>
   )
 }
