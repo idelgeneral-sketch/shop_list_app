@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IconCheck, IconDragHandle } from './Icons'
 
 const LONG_PRESS_MS = 500
@@ -73,6 +73,19 @@ export function ItemRow({
     }
   }
 
+  // While delete-mode is open, close it on a click ANYWHERE on the page —
+  // not just inside this row. The delete button itself stops propagation
+  // (see below), so a click there reaches this listener at all only if
+  // deletion didn't happen; in practice it deletes and the row unmounts.
+  useEffect(() => {
+    if (!deleteMode) return
+    function handleOutsideClick() {
+      setDeleteMode(false)
+    }
+    document.addEventListener('click', handleOutsideClick)
+    return () => document.removeEventListener('click', handleOutsideClick)
+  }, [deleteMode])
+
   const classes = [
     'item-row',
     item.is_purchased ? 'is-purchased' : '',
@@ -85,7 +98,7 @@ export function ItemRow({
 
   if (deleteMode) {
     return (
-      <div className={classes} onClick={() => setDeleteMode(false)}>
+      <div className={classes}>
         <div className="drag-handle is-disabled" aria-hidden="true">
           <IconDragHandle />
         </div>

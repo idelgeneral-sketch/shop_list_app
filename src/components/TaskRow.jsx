@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IconCheck, IconDragHandle, IconTrash } from './Icons'
 
 const LONG_PRESS_MS = 500
@@ -51,6 +51,15 @@ export function TaskRow({ task, onToggle, onUpdate, onRequestDelete, isDragging,
     }
   }
 
+  useEffect(() => {
+    if (!deleteMode) return
+    function handleOutsideClick() {
+      setDeleteMode(false)
+    }
+    document.addEventListener('click', handleOutsideClick)
+    return () => document.removeEventListener('click', handleOutsideClick)
+  }, [deleteMode])
+
   const classes = [
     'item-row',
     task.is_done ? 'is-purchased' : '',
@@ -63,7 +72,7 @@ export function TaskRow({ task, onToggle, onUpdate, onRequestDelete, isDragging,
 
   if (deleteMode) {
     return (
-      <div className={classes} onClick={() => setDeleteMode(false)}>
+      <div className={classes}>
         <div className="drag-handle is-disabled" aria-hidden="true">
           <IconDragHandle />
         </div>
