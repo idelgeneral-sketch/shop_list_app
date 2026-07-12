@@ -17,6 +17,7 @@ export function ItemRow({
   const [draggable, setDraggable] = useState(false)
   const [deleteMode, setDeleteMode] = useState(false)
   const pressTimer = useRef(null)
+  const longPressTriggered = useRef(false)
 
   function commitName() {
     const trimmed = name.trim()
@@ -39,7 +40,17 @@ export function ItemRow({
     // The drag handle (the dots) has its own press behavior for reordering —
     // don't also start a delete-reveal timer when the press begins there.
     if (e.target.closest('.drag-handle')) return
+
+    longPressTriggered.current = false
+    // Block the input's native focus/cursor for now — we don't yet know if
+    // this is a quick tap (meant to edit) or a long press (meant to delete).
+    // If it turns out to be a quick tap, we focus it manually on release.
+    if (e.target.tagName === 'INPUT') {
+      e.preventDefault()
+    }
+
     pressTimer.current = setTimeout(() => {
+      longPressTriggered.current = true
       if (navigator.vibrate) navigator.vibrate(12)
       document.activeElement?.blur()
       setDeleteMode(true)
@@ -47,7 +58,19 @@ export function ItemRow({
   }
 
   function cancelPress() {
-    if (pressTimer.current) clearTimeout(pressTimer.current)
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current)
+      pressTimer.current = null
+    }
+  }
+
+  function endPress(e) {
+    cancelPress()
+    // A genuine short tap on a field — restore the normal edit behavior we
+    // suppressed in startPress.
+    if (!longPressTriggered.current && e.target.tagName === 'INPUT') {
+      e.target.focus()
+    }
   }
 
   const classes = [
@@ -88,7 +111,7 @@ export function ItemRow({
       className={classes}
       draggable={draggable}
       onPointerDown={startPress}
-      onPointerUp={cancelPress}
+      onPointerUp={endPress}
       onPointerLeave={cancelPress}
       onPointerMove={cancelPress}
       {...(canReorder ? dragHandlers : {})}
